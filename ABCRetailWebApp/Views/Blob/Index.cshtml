@@ -1,0 +1,52 @@
+﻿@model ABCRetailWebApp.Models.BlobStorageModel
+
+@{
+    ViewData["Title"] = "ABC Retail - Product Images";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3>Upload Product Image</h3>
+                </div>
+                <div class="card-body p-4">
+
+                    @if (ViewBag.Message != null)
+                    {
+                        <div class="alert alert-success">@ViewBag.Message</div>
+                    }
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.Error</div>
+                    }
+
+                    <!-- Notice the enctype attribute, it is required for file uploads -->
+                    <form asp-controller="Blob" asp-action="Upload" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label asp-for="ImageFile" class="form-label font-weight-bold">Select Image Asset</label>
+                            <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                            <span asp-validation-for="ImageFile" class="text-danger"></span>
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Upload to Azure Blob</button>
+                        </div>
+                    </form>
+
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <hr class="my-4" />
+                        <div class="text-center">
+                            <h5>Live Preview from Azure Storage:</h5>
+                            <img src="@Model.ImageUrl" alt="Uploaded Asset" class="img-fluid rounded border mt-2 shadow-sm" style="max-height: 250px;" />
+                            <p class="text-muted mt-2 small text-break">
+                                <strong>URL:</strong> <a href="@Model.ImageUrl" target="_blank">@Model.ImageUrl</a>
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

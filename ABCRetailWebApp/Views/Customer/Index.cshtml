@@ -1,0 +1,102 @@
+﻿@model ABCRetailWebApp.Models.CustomerProfileModel
+
+@{
+    ViewData["Title"] = "ABC Retail - Customer Directory Management";
+    var customerList = ViewBag.Customers as List<ABCRetailWebApp.Models.CustomerProfileModel> ?? new List<ABCRetailWebApp.Models.CustomerProfileModel>();
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- LEFT COLUMN: Input Registration Form -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow border-0">
+                <div class="card-header bg-success text-white py-3">
+                    <h5 class="mb-0">Register Customer Profile</h5>
+                </div>
+                <div class="card-body p-4">
+                    @if (ViewBag.Message != null)
+                    {
+                        <div class="alert alert-success">@ViewBag.Message</div>
+                    }
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.Error</div>
+                    }
+
+                    <form asp-controller="Customer" asp-action="Create" method="post">
+                        <input type="hidden" asp-for="PartitionKey" />
+                        <input type="hidden" asp-for="RowKey" />
+
+                        <div class="mb-3">
+                            <label asp-for="FirstName" class="form-label font-weight-bold">First Name</label>
+                            <input asp-for="FirstName" class="form-control" placeholder="Enter first name" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="LastName" class="form-label font-weight-bold">Last Name</label>
+                            <input asp-for="LastName" class="form-control" placeholder="Enter last name" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label font-weight-bold">Email Address</label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="name@example.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PhoneNumber" class="form-label font-weight-bold">Phone Number</label>
+                            <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="e.g. 0821234567" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg">Save to Azure Tables</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Live Customer Grid Directory -->
+        <div class="col-lg-8">
+            <h3 class="mb-4 text-secondary">Active Registered Clients</h3>
+
+            @if (!customerList.Any())
+            {
+                <div class="alert alert-info py-4 shadow-sm text-center">
+                    <h5>No active profiles registered yet.</h5>
+                </div>
+            }
+            else
+            {
+                <div class="card shadow border-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped mb-0 alignment-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Full Name</th>
+                                    <th>Email Address</th>
+                                    <th>Phone Number</th>
+                                    <th>Unique Row ID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var client in customerList)
+                                {
+                                    <tr>
+                                        <td><strong>@client.FirstName @client.LastName</strong></td>
+                                        <td><a href="mailto:@client.Email">@client.Email</a></td>
+                                        <td>@client.PhoneNumber</td>
+                                        <td><small class="text-muted font-monospace">@client.RowKey.Substring(0, 8)...</small></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
